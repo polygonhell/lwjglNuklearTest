@@ -7,8 +7,7 @@ import org.lwjgl.glfw.GLFW._
 import org.lwjgl.nuklear._
 import org.lwjgl.nuklear.Nuklear._
 import org.lwjgl.opengl.{GL, GLUtil, KHRDebug}
-import org.lwjgl.system.{MemoryStack, Platform}
-import org.lwjgl.system.MemoryStack._
+import org.lwjgl.system.Platform
 import org.lwjgl.opengl.ARBDebugOutput._
 import org.lwjgl.opengl.GL11._
 import org.lwjgl.opengl.GL12._
@@ -20,20 +19,9 @@ import org.lwjgl.opengl.GL30._
 import org.lwjgl.opengl.GL43._
 import org.lwjgl.stb.{STBTTAlignedQuad, STBTTFontinfo, STBTTPackContext, STBTTPackedchar}
 import org.lwjgl.stb.STBTruetype._
-
-
-//import org.lwjgl.system.MemoryStack._
 import org.lwjgl.system.MemoryUtil._
 
 
-object Utils {
-  def withStack[A](fn: MemoryStack => A) : A = {
-    val stack = stackPush()
-    val r = fn(stack)
-    stack.close()
-    r
-  }
-}
 
 
 object Main {
@@ -91,8 +79,8 @@ object Main {
 
   val ttf: ByteBuffer = IOUtil.ioResourceToByteBuffer("demo/FiraSans.ttf", 160 * 1024)
 
-  val demo = new Demo()
-  val calc = new Calculator()
+  val demo = new Demo2("demo")
+  val demo2 = new Demo2("demo2")
 
 
   def main(args: Array[String]): Unit = {
@@ -238,7 +226,7 @@ object Main {
       newFrame()
 
       demo.layout(ctx, 50, 50)
-      calc.layout(ctx, 300, 50)
+      demo2.layout(ctx, 300, 50)
 
       withStack{ stack =>
         val bg = stack.mallocFloat(4)
@@ -300,9 +288,6 @@ object Main {
     destroy()
     default_font.query().free()
     default_font.width().free()
-
-    calc.numberFilter.free()
-
     ALLOCATOR.alloc().free()
     ALLOCATOR.mfree().free()
   }
